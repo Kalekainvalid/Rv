@@ -1,0 +1,89 @@
+services:
+  app-php: &app-php
+    working_dir: /var/www/laravel
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: sh
+    command: -c 'php artisan serve --host 0.0.0.0 --port 8000'
+    ports:
+        - "24110:8000"
+    volumes:
+      - ./main_app:/var/www/laravel
+    networks:
+        - app
+
+  mongodb-php: &mongodb-php
+    working_dir: /var/www/laravel
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: sh
+    command: -c 'php artisan serve --host 0.0.0.0 --port 8000'
+    ports:
+      - "24130:8000"
+    volumes:
+      - ./mongodb_app:/var/www/laravel
+    networks:
+      - app
+
+  app-composer:
+    <<: *app-php
+    restart: "no"
+    entrypoint: sh
+    command: -c 'composer install'
+    working_dir: /var/www/laravel
+    ports:
+        - "9974"
+    volumes:
+      - ./main_app:/var/www/laravel
+    networks:
+        - app
+
+  mongodb-composer:
+    <<: *mongodb-php
+    restart: "no"
+    entrypoint: sh
+    command: -c 'composer install'
+    working_dir: /var/www/laravel
+    ports:
+      - "9976"
+    volumes:
+      - ./mongodb_app:/var/www/laravel
+    networks:
+      - app
+
+  app-postgres:
+    image: postgres:17.4-alpine3.21
+    restart: always
+    command: [ "postgres", "-c", "log_statement=all" ]
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: distcomp
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+        - app
+
+  mongodb:
+    image: mongo:latest
+    restart: always
+    ports:
+      - "9402:9402"
+    volumes:
+      - mongodb_data:/data/db
+
+
+
+networks:
+    app:
+
+volumes:
+    pgdata:
+    mongodb_data:
+
