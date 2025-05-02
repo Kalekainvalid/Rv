@@ -3,9 +3,6 @@
 namespace App\Http\Requests\Notice;
 
 use App\Http\Requests\ApiRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 
 /**

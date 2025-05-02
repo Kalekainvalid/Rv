@@ -5,10 +5,10 @@
       <list>
         <option value="$PROJECT_DIR$/tests/Unit" />
         <option value="$PROJECT_DIR$/tests/Feature" />
-        <option value="$PROJECT_DIR$/mongodb_app/tests/Unit" />
-        <option value="$PROJECT_DIR$/mongodb_app/tests/Feature" />
         <option value="$PROJECT_DIR$/main_app/tests/Unit" />
         <option value="$PROJECT_DIR$/main_app/tests/Feature" />
+        <option value="$PROJECT_DIR$/mongodb_app/tests/Unit" />
+        <option value="$PROJECT_DIR$/mongodb_app/tests/Feature" />
       </list>
     </option>
   </component>

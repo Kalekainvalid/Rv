@@ -8,6 +8,7 @@ use App\Http\Requests\Editor\EditorUpdateRequest;
 use App\Http\Resources\Editor\EditorRecourse;
 use App\Models\Editor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class EditorController extends Controller
 {

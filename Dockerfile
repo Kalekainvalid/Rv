@@ -23,6 +23,7 @@ RUN install-php-extensions @composer
 
 RUN pecl install pcov
 RUN pecl install mongodb
+RUN pecl install redis
 
 RUN apk update && \
     apk add freetype-dev \
@@ -31,6 +32,6 @@ RUN apk update && \
     libpng-dev && \
     docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ && \
     docker-php-ext-install gd curl opcache && \
-    docker-php-ext-enable pcov mongodb
+    docker-php-ext-enable pcov mongodb redis
 
 USER root

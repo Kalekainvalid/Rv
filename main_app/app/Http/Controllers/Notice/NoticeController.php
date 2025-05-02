@@ -13,46 +13,52 @@ use App\Models\Editor;
 use App\Models\Notice;
 use App\Models\Topic;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 class NoticeController extends Controller
 {
     public function index()
     {
-        $notices = Notice::all();
+        $notices = Http::mongo()->get('/')->json();
 
-        return response()->json(NoticeResource::collection($notices), 200);
+        return response()->json($notices, 200);
     }
 
     public function store(NoticeStoreRequest $request)
     {
-        $notice = Notice::create(
-            [
-                'topic_id' => $request->topicId,
-                'content' => $request->content,
-            ]
-        );
-
-        return response()->json(NoticeResource::make($notice), 201);
-    }
-
-    public function update(NoticeUpdateRequest $request, Notice $notice)
-    {
-        $notice->update([
-            'topic_id' => $request->topicId,
+        $notice = Http::mongo()->post('/', [
+            'topicId' => $request->topicId,
             'content' => $request->content,
-        ]);
-        $notice->refresh();
+        ])->json();
+        Cache::put('notice-'.$notice['id'], $notice, 60);
 
-        return response()->json(NoticeResource::make($notice), 200);
+        return response()->json($notice, 201);
     }
 
-    public function show(Notice $notice)
+    public function update(NoticeUpdateRequest $request, string $id)
     {
-        return response()->json(NoticeResource::make($notice), 200);
+        $notice = Http::mongo()->put('/'.$id, [
+            'topicId' => $request->topicId,
+            'content' => $request->content,
+        ])->json();
+        Cache::put('notice-'.$notice['id'], $notice, 60);
+
+        return response()->json($notice, 200);
     }
 
-    public function destroy(Notice $notice) {
-        $notice->delete();
+    public function show(string $id)
+    {
+        if (!$notice = Cache::get('notice-'.$id)) {
+            $notice = Http::mongo()->get('/'.$id)->json();
+        }
+
+
+        return response()->json($notice, 200);
+    }
+
+    public function destroy(string $id) {
+        Http::mongo()->delete('/'.$id)->json();
 
         return response()->json(null, 204);
     }
